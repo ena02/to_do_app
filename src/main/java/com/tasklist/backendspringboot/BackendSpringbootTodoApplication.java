@@ -9,5 +9,4 @@ public class BackendSpringbootTodoApplication {
     public static void main(String[] args) {
         SpringApplication.run(BackendSpringbootTodoApplication.class, args);
     }
-    
 }
