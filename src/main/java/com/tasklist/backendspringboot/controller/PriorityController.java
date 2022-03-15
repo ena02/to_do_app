@@ -2,9 +2,7 @@ package com.tasklist.backendspringboot.controller;
 
 import com.tasklist.backendspringboot.entity.Priority;
 import com.tasklist.backendspringboot.repo.PriorityRepository;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -25,6 +23,10 @@ public class PriorityController {
         System.out.println(list);
 
         return list;
+    }
 
+    @PostMapping("/add")
+    public Priority add(@RequestBody Priority priority) {
+        return priorityRepository.save(priority);
     }
 }
