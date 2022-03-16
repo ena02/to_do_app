@@ -1,9 +1,9 @@
 package com.tasklist.backendspringboot.controller;
 
 import com.tasklist.backendspringboot.entity.Category;
-import com.tasklist.backendspringboot.entity.Priority;
 import com.tasklist.backendspringboot.repo.CategoryRepository;
 import com.tasklist.backendspringboot.search.CategorySearchValues;
+import com.tasklist.backendspringboot.util.MyLogger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,12 +24,17 @@ public class CategoryController {
 
     @GetMapping("/all")
     public List<Category> findAll() {
+
+        MyLogger.showMethodName("CategoryController: findAll() ---------------------------------------------------------- ");
         return categoryRepository.findAllByOrderByTitleAsc();
     }
 
 
     @PostMapping("/add")
     public ResponseEntity<Category> add(@RequestBody Category category) {
+
+        MyLogger.showMethodName("CategoryController: add() ---------------------------------------------------------- ");
+
 
         if (category.getId() != null && category.getId() != 0) {
             return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
@@ -44,6 +49,9 @@ public class CategoryController {
 
     @PutMapping("/update")
     public ResponseEntity<Category> update(@RequestBody Category category) {
+
+        MyLogger.showMethodName("CategoryController: update() ---------------------------------------------------------- ");
+
 
         if (category.getId() == null && category.getId() == 0) {
             return new ResponseEntity("id can not be null", HttpStatus.NOT_ACCEPTABLE);
@@ -60,6 +68,9 @@ public class CategoryController {
     @GetMapping("/id/{id}")
     public ResponseEntity<Category> findById(@PathVariable Long id) {
 
+        MyLogger.showMethodName("CategoryController: findById() ---------------------------------------------------------- ");
+
+
         Category category = null;
 
         try {
@@ -75,6 +86,9 @@ public class CategoryController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> deleteById(@PathVariable Long id) {
 
+        MyLogger.showMethodName("CategoryController: delete() ---------------------------------------------------------- ");
+
+
         try {
             categoryRepository.deleteById(id);
             return new ResponseEntity("Success", HttpStatus.ACCEPTED);
@@ -86,6 +100,9 @@ public class CategoryController {
 
     @PostMapping("/search")
     public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues) {
+
+        MyLogger.showMethodName("CategoryController: search() ---------------------------------------------------------- ");
+
         return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
     }
 }
