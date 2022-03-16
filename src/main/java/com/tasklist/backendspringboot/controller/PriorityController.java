@@ -20,13 +20,10 @@ public class PriorityController {
         this.priorityRepository = priorityRepository;
     }
 
-    @GetMapping("/test")
-    public List<Priority> test() {
+    @GetMapping("/all")
+    public List<Priority> findAll() {
 
-        List<Priority> list = priorityRepository.findAll();
-        System.out.println(list);
-
-        return list;
+        return priorityRepository.findAllByOrderByTitleAsc();
     }
 
     @PostMapping("/add")
