@@ -49,7 +49,7 @@ public class PriorityController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Priority> update(@RequestBody Priority priority) {
+    public ResponseEntity update(@RequestBody Priority priority) {
 
         MyLogger.showMethodName("PriorityController: update() ---------------------------------------------------------- ");
 
@@ -66,7 +66,8 @@ public class PriorityController {
             return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(priorityRepository.save(priority));
+        priorityRepository.save(priority);
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")

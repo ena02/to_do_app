@@ -48,7 +48,7 @@ public class CategoryController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<Category> update(@RequestBody Category category) {
+    public ResponseEntity update(@RequestBody Category category) {
 
         MyLogger.showMethodName("CategoryController: update() ---------------------------------------------------------- ");
 
@@ -62,7 +62,9 @@ public class CategoryController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(categoryRepository.save(category));
+        categoryRepository.save(category);
+
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @GetMapping("/id/{id}")
@@ -91,11 +93,11 @@ public class CategoryController {
 
         try {
             categoryRepository.deleteById(id);
-            return new ResponseEntity("Success", HttpStatus.ACCEPTED);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity(String.format("Category with id = %d not found", id), HttpStatus.NOT_ACCEPTABLE);
         }
+        return new ResponseEntity(HttpStatus.OK);
     }
 
     @PostMapping("/search")
