@@ -2,8 +2,12 @@ package com.tasklist.backendspringboot.controller;
 
 import com.tasklist.backendspringboot.entity.Task;
 import com.tasklist.backendspringboot.repo.TaskRepository;
+import com.tasklist.backendspringboot.search.TaskSearchValues;
 import com.tasklist.backendspringboot.util.MyLogger;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -99,5 +103,35 @@ public class TaskController {
         return new ResponseEntity(HttpStatus.OK);
     }
 
+    @PostMapping("/search")
+    public ResponseEntity<Page<Task>> search(@RequestBody TaskSearchValues taskSearchValues) {
+
+        MyLogger.showMethodName("CategoryController: search() ---------------------------------------------------------- ");
+
+        String text = taskSearchValues.getTitle() != null ? taskSearchValues.getTitle() : null;
+
+        Integer completed = taskSearchValues.getCompleted() != null ? taskSearchValues.getCompleted() : null;
+
+        Long priorityId = taskSearchValues.getPriorityId() != null ? taskSearchValues.getPriorityId() : null;
+        Long categoryId = taskSearchValues.getCategoryId() != null ? taskSearchValues.getCategoryId() : null;
+
+        Integer pageNumber = taskSearchValues.getPageNumber() != null ? taskSearchValues.getPageNumber() : null;
+        Integer pageSize = taskSearchValues.getPageSize() != null ? taskSearchValues.getPageSize() : null;
+
+        String sortColumn = taskSearchValues.getSortColumn() != null ? taskSearchValues.getSortColumn() : null;
+        String sortDirection = taskSearchValues.getSortDirection() != null ? taskSearchValues.getSortDirection() : null;
+
+        Sort.Direction direction = sortDirection == null || sortDirection.trim().equals("asc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+
+
+        Sort sort = Sort.by(direction, sortColumn);
+
+        PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
+
+        Page result = taskRepository.findByParams(text, completed, priorityId, categoryId, pageRequest);
+        /*List result = taskRepository.findByParams(taskSearchValues.getTitle(), taskSearchValues.getCompleted(), taskSearchValues.getPriorityId(), taskSearchValues.getCategoryId());*/
+
+        return ResponseEntity.ok(result);
+    }
 
 }

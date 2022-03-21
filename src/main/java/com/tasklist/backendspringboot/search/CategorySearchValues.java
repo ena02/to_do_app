@@ -11,6 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class CategorySearchValues {
 
-
     private String text;
 }
