@@ -1,8 +1,8 @@
 package com.tasklist.backendspringboot.controller;
 
 import com.tasklist.backendspringboot.entity.Task;
-import com.tasklist.backendspringboot.repo.TaskRepository;
 import com.tasklist.backendspringboot.search.TaskSearchValues;
+import com.tasklist.backendspringboot.service.TaskService;
 import com.tasklist.backendspringboot.util.MyLogger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -19,10 +19,10 @@ import java.util.NoSuchElementException;
 @RequestMapping("/task")
 public class TaskController {
 
-    private TaskRepository taskRepository;
+    private final TaskService taskService;
 
-    public TaskController(TaskRepository taskRepository) {
-        this.taskRepository = taskRepository;
+    public TaskController(TaskService taskService) {
+        this.taskService = taskService;
     }
 
     @GetMapping("/all")
@@ -30,7 +30,7 @@ public class TaskController {
 
         MyLogger.showMethodName("TaskController: findAll() ---------------------------------------------------------- ");
 
-        return taskRepository.findAll();
+        return taskService.findAll();
     }
 
     @PostMapping("/add")
@@ -48,7 +48,7 @@ public class TaskController {
         }
 
 
-        return ResponseEntity.ok(taskRepository.save(Task));
+        return ResponseEntity.ok(taskService.add(Task));
     }
 
     @PutMapping("/update")
@@ -65,7 +65,7 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        taskRepository.save(Task);
+        taskService.update(Task);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -79,7 +79,7 @@ public class TaskController {
         Task task = null;
 
         try {
-            task = taskRepository.findById(id).get();
+            task = taskService.findById(id);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return new ResponseEntity(String.format("id=%d not found", id), HttpStatus.NOT_ACCEPTABLE);
@@ -95,7 +95,7 @@ public class TaskController {
 
 
         try {
-            taskRepository.deleteById(id);
+            taskService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity(String.format("Task with id = %d not found", id), HttpStatus.NOT_ACCEPTABLE);
@@ -128,8 +128,8 @@ public class TaskController {
 
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
-        Page result = taskRepository.findByParams(text, completed, priorityId, categoryId, pageRequest);
-        /*List result = taskRepository.findByParams(taskSearchValues.getTitle(), taskSearchValues.getCompleted(), taskSearchValues.getPriorityId(), taskSearchValues.getCategoryId());*/
+        Page result = taskService.findByParams(text, completed, priorityId, categoryId, pageRequest);
+        /*List result = taskService.findByParams(taskSearchValues.getTitle(), taskSearchValues.getCompleted(), taskSearchValues.getPriorityId(), taskSearchValues.getCategoryId());*/
 
         return ResponseEntity.ok(result);
     }

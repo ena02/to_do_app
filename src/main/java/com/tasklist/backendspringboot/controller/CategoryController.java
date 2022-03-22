@@ -1,8 +1,8 @@
 package com.tasklist.backendspringboot.controller;
 
 import com.tasklist.backendspringboot.entity.Category;
-import com.tasklist.backendspringboot.repo.CategoryRepository;
 import com.tasklist.backendspringboot.search.CategorySearchValues;
+import com.tasklist.backendspringboot.service.CategoryService;
 import com.tasklist.backendspringboot.util.MyLogger;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
@@ -16,17 +16,17 @@ import java.util.NoSuchElementException;
 @RequestMapping("/category")
 public class CategoryController {
 
-    private CategoryRepository categoryRepository;
+    private final CategoryService categoryService;
 
-    public CategoryController(CategoryRepository categoryRepository) {
-        this.categoryRepository = categoryRepository;
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
     }
 
     @GetMapping("/all")
     public List<Category> findAll() {
 
         MyLogger.showMethodName("CategoryController: findAll() ---------------------------------------------------------- ");
-        return categoryRepository.findAllByOrderByTitleAsc();
+        return categoryService.findAll();
     }
 
 
@@ -44,7 +44,7 @@ public class CategoryController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        return ResponseEntity.ok(categoryRepository.save(category));
+        return ResponseEntity.ok(categoryService.add(category));
     }
 
     @PutMapping("/update")
@@ -62,7 +62,7 @@ public class CategoryController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        categoryRepository.save(category);
+        categoryService.update(category);
 
         return new ResponseEntity(HttpStatus.OK);
     }
@@ -76,7 +76,7 @@ public class CategoryController {
         Category category = null;
 
         try {
-            category = categoryRepository.findById(id).get();
+            category = categoryService.findById(id);
         } catch (NoSuchElementException e) {
             e.printStackTrace();
             return new ResponseEntity(String.format("id=%d not found", id), HttpStatus.NOT_ACCEPTABLE);
@@ -92,7 +92,7 @@ public class CategoryController {
 
 
         try {
-            categoryRepository.deleteById(id);
+            categoryService.deleteById(id);
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity(String.format("Category with id = %d not found", id), HttpStatus.NOT_ACCEPTABLE);
@@ -105,6 +105,6 @@ public class CategoryController {
 
         MyLogger.showMethodName("CategoryController: search() ---------------------------------------------------------- ");
 
-        return ResponseEntity.ok(categoryRepository.findByTitle(categorySearchValues.getText()));
+        return ResponseEntity.ok(categoryService.findByTitle(categorySearchValues.getText()));
     }
 }

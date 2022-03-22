@@ -1,7 +1,7 @@
 package com.tasklist.backendspringboot.controller;
 
 import com.tasklist.backendspringboot.entity.Stat;
-import com.tasklist.backendspringboot.repo.StatRepository;
+import com.tasklist.backendspringboot.service.StatService;
 import com.tasklist.backendspringboot.util.MyLogger;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class StatController {
 
-    StatRepository statRepository;
+    private final StatService statService;
 
-    public StatController(StatRepository statRepository) {
-        this.statRepository = statRepository;
+    public StatController(StatService statService) {
+        this.statService = statService;
     }
 
     private final Long defaultId = 1l;
@@ -23,6 +23,6 @@ public class StatController {
 
         MyLogger.showMethodName("StatController: findById() ---------------------------------------------------------- ");
 
-        return ResponseEntity.ok(statRepository.findById(defaultId).get());
+        return ResponseEntity.ok(statService.findById(defaultId));
     }
 }
